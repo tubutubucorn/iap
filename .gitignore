@@ -1,0 +1,5 @@
+**/__pycache__
+pep/userDB/
+pdp/logDB/
+file-server_owncloud/owncloud/
+mail-server_rainloop/rainloop

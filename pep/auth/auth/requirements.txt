@@ -1,0 +1,9 @@
+flask
+mysqlclient
+sqlalchemy
+flask-sqlalchemy
+email_validator
+flask-wtf
+python-dotenv
+redis
+flask-session

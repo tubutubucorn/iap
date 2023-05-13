@@ -1,0 +1,50 @@
+version: '3'
+services:
+  # referenced by https://github.com/tomav/docker-mailserver
+  mail-server:
+    image: tvial/docker-mailserver
+    domainname: example.com
+    expose:
+      - '25'
+      - '143'
+      - '587'
+      - '993'
+      - '4190'
+    volumes:
+      - ./mail-server:/tmp/docker-mailserver
+    environment:
+      - TZ=Asia/Tokyo
+      - DMS_DEBUG=0 # debugしたい場合は 1
+      - ENABLE_SPAMASSASSIN=0
+      - ENABLE_CLAMAV=0
+      - ENABLE_FETCHMAIL=0
+      - ENABLE_FAIL2BAN=0
+      - ENABLE_POSTGREY=0
+      - ENABLE_POP3=0
+    cap_add:
+      - NET_ADMIN
+      - SYS_PTRACE
+    restart: always
+    networks:
+      - private_nw
+  # 管理画面: http://localhost:8888/?admin
+  # 管理画面パスワード: admin / 12345
+  # 要ドメイン初期設定。管理画面にアクセス。設定方法はinitial_settingsを参照
+  rainloop:
+    image: hardware/rainloop
+    #ports:
+    #  - '8883:8888'
+    expose:
+      - '8888'
+    environment:
+      - TZ=Asia/Tokyo
+    restart: always
+    volumes:
+      - ./rainloop:/rainloop/data
+    depends_on:
+      - mail-server
+    networks:
+      - private_nw
+networks:
+  private_nw:
+    external: true

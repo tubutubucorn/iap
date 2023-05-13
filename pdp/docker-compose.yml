@@ -1,0 +1,16 @@
+version: '3'
+services:
+  pdp:
+    build: ./pdp
+    expose:
+      - '5000'
+    volumes:
+      - ./pdp/pdp:/pdp
+    environment:
+      - TZ=Asia/Tokyo
+    tty: true
+    networks:
+      - control_plane
+networks:
+  control_plane:
+    external: true

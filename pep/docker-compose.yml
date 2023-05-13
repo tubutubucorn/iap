@@ -1,0 +1,64 @@
+version: '3'
+services:
+  rproxy:
+    image: openresty/openresty
+    ports:
+      - '8881:8881' # badstore
+      - '8882:8882' # owncloud
+      - '8883:8883' # rainloop
+    volumes:
+      - ./rproxy/conf.d:/etc/nginx/conf.d
+      - ./rproxy/openresty:/etc/openresty
+      - ./rproxy/ssl:/etc/nginx/ssl
+    environment:
+      - TZ=Asia/Tokyo
+    restart: always
+    networks:
+      - DMZ
+      - private_nw
+  auth:
+    build: ./auth
+    expose:
+      - '5000'
+    volumes:
+      - ./auth/auth:/auth
+    environment:
+      - TZ=Asia/Tokyo
+    privileged: true
+    tty: true
+    networks:
+      - private_nw
+      - control_plane
+  userDB:
+    image: mysql:5.7
+    expose:
+      - '3306'
+    environment:
+      - TZ=Asia/Tokyo
+      - MYSQL_ROOT_PASSWORD=secret
+      - MYSQL_USER=zero
+      - MYSQL_PASSWORD=trust
+      - MYSQL_DATABASE=test
+    privileged: true
+    volumes:
+      - ./userDB:/var/lib/mysql
+    networks:
+      - control_plane
+  cacheDB:
+    image: redis
+    expose:
+      - '6379'
+    environment:
+      - TZ=Asia/Tokyo
+    privileged: true
+    restart: always
+    command: redis-server --appendonly yes --requirepass zerotrust
+    networks:
+      - control_plane
+networks:
+  DMZ:
+    external: true
+  private_nw:
+    external: true
+  control_plane:
+    external: true

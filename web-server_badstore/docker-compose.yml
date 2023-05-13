@@ -1,0 +1,16 @@
+version: '3'
+services:
+  badstore:
+    image: jvhoof/badstore-docker
+    #ports:
+    #  - '8881:80'
+    expose:
+      - '80'
+    environment:
+      - TZ=Asia/Tokyo
+    restart: always
+    networks:
+      - private_nw
+networks:
+  private_nw:
+    external: true
